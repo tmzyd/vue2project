@@ -48,8 +48,15 @@ export default {
       login(){
         this.$refs.loginref.validate(async valid =>{
           if(!valid) return;
-          const {data:res} = await this.$http.get('GetTeacherCourseALL');
-          console.log(res);
+          await this.$http.get('GetTeacherCourseALL').then(res=>{
+            this.$message.succes('登录成功');
+            console.log(res);
+            //window.sessionStorage.setItem("token",res.data.token);
+            this.$router.push('/home');
+          })
+          .catch(err=>{
+            this.$message.error(err);
+          })
         })
       }
     }
