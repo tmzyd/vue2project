@@ -2,6 +2,8 @@ import Vue from 'vue'
 import VueRouter from 'vue-router'
 import Login from '../components/Login.vue'
 import Home from '../components/Home.vue'
+import Register from '../components/Register.vue'
+import PublishArticle from '../components/PublishArticle.vue'
 
 Vue.use(VueRouter)
 
@@ -17,6 +19,14 @@ const routes = [
   {
     path:'/home',
     component:Home
+  },
+  {
+    path:'/register',
+    component:Register
+  },
+  {
+    path:'/publisharticle',
+    component:PublishArticle
   }
 ]
 
@@ -28,7 +38,8 @@ router.beforeEach((to,from,next)=>{
   console.log('进入路由导航守卫')
   if(to.path == '/login') return next()
   console.log('页面控制')
-  next('/login')
+  next()
+  //next('/login')
 })
 
 export default router

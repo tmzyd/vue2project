@@ -15,9 +15,13 @@
           <el-input v-model="loginform.password" prefix-icon="el-icon-lock" type="password" ></el-input>
         </el-form-item>
 
+        <el-form-item class="formitem" label="确认密码" prop="confirmpassword">
+          <el-input v-model="loginform.confirmpassword" prefix-icon="el-icon-lock" type="password" ></el-input>
+        </el-form-item>
+
         <el-form-item class="loginbtn_box">
-          <el-button @click="register">注册</el-button>
-          <el-button type="primary" @click="login">登录</el-button>
+          <el-button type="primary" @click="register">注册</el-button>
+          <el-button @click="btncancel">返回</el-button>
         </el-form-item>
       </el-form>
     </div>
@@ -27,11 +31,24 @@
 <script>
 export default {
   data() {
+    let verifypwd = (rule, value, callback) => {
+        if (value === '') {
+        callback(new Error('请再次输入密码'));
+        } else if (value !== this.loginform.password) {
+        callback(new Error('两次输入密码不一致!'));
+        } else {
+        callback();
+        }
+    }
+
     return {
       loginform: {
-        username: 'admin',
-        password: '123456'
+        username: '',
+        password: '',
+        confirmpassword:''
       },
+      
+
       loginformRules: {
         //验证合规
         username: [
@@ -41,44 +58,20 @@ export default {
           { required: true, message: '请输入密码', trigger: 'blur' },
           { min: 6, max: 16, message: '长度在 3 到 5 个字符', trigger: 'blur' }
         ]
+        ,
+        confirmpassword: [
+          { validator: verifypwd, trigger: 'blur' }
+        ]
       }
     }
   },
   methods: {
-    login() {
-      this.$refs.loginref.validate(async (valid) => {
-        if (!valid) return;
-        const result = await this.$http.post('AccountLogin',{
-          data:{
-            name: this.loginform.username,
-            password: this.loginform.password
-          }
-        })
-          // .then((res) => {
-          //   this.$message.succes('登录成功')
-          //   //
-          //   this.$router.push('/home')
-          // })
-          // .catch((err) => {
-          //   this.$message.error(err)
-          //   this.$router.push('/home')
-          // })
-
-          if(0 == result.data.code)
-          {
-            console.log(result);
-            window.sessionStorage.setItem("token",result.data.token);
-            this.$router.push('/home')
-          }
-          else{
-            console.log(result);
-            this.$message.error(result.data.message);
-          }
-      })
+    btncancel() {
+      this.$router.push('/login')
     },
 
     register() {
-      this.$router.push('/register')
+      this.$message.success('注册成功')
     },
   },
 }
@@ -92,7 +85,7 @@ export default {
 
 .login_box {
   width: 450px;
-  height: 300px;
+  height: 350px;
   background-color: #fff;
   border-radius: 3px;
   position: absolute;
