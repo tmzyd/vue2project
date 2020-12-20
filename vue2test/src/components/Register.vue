@@ -6,7 +6,7 @@
         <img src="../assets/logo.png" alt="" />
       </div>
       <!--表单-->
-      <el-form ref="loginref" :model="loginform" :rules="loginformRules" label-width="80px" class="form_box" label-position="left">
+      <el-form ref="registerref" :model="loginform" :rules="loginformRules" label-width="80px" class="form_box" label-position="left">
         <el-form-item class="formitem" label="用户名" prop="username">
           <el-input v-model="loginform.username" prefix-icon="el-icon-user"></el-input>
         </el-form-item>
@@ -71,7 +71,26 @@ export default {
     },
 
     register() {
-      this.$message.success('注册成功')
+      this.$refs.registerref.validate(async (valid) => {
+        if (!valid) return;
+        const result = await this.$http.post('AccountApply',{
+          data:{
+            name: this.loginform.username,
+            password: this.loginform.password
+          }
+        })
+
+          if(0 == result.data.code)
+          {
+            console.log(result);
+            window.sessionStorage.setItem("token",result.data.token);
+            this.$router.push('/home')
+          }
+          else{
+            console.log(result);
+            this.$message.error(result.data.message);
+          }
+      })
     },
   },
 }
